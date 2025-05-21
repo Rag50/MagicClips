@@ -11,7 +11,7 @@ async function uploadToAzure(filePath, blobName) {
 
 async function deleteLocalFile(filePath) {
     try {
-        await fs.unlink(filePath);
+        await fs.unlinkSync(filePath);
     } catch (err) {
         console.error('Error deleting local file:', err);
     }

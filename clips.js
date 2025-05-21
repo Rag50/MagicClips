@@ -62,6 +62,11 @@ app.post('/api/smartclips', async (req, res) => {
         const processingResults = await processClips(parsedClips);
         console.log('Processing complete:', processingResults);
 
+        if (INPUT_VIDEO_PATH) {
+            await deleteLocalFile(INPUT_VIDEO_PATH).catch(err => console.error('Error deleting original video:', err));
+            INPUT_VIDEO_PATH = '';
+        }
+
 
         const clipData = processingResults.map(result => ({
             videoUrl: result.url,
@@ -70,6 +75,7 @@ app.post('/api/smartclips', async (req, res) => {
             reason: result.reason
         }));
 
+        
         res.json({ clips: clipData });
 
     } catch (error) {
@@ -461,19 +467,18 @@ async function processClip(clip, subtitles) {
 
         await fs.writeFile(tempSrtPath, srtContent);
 
-        // Build ffmpeg command
         const args = [
             '-y',
             '-ss', clip.start,
             '-i', INPUT_VIDEO_PATH,
             '-t', duration.toFixed(3),
-            '-vf', `subtitles=${tempSrtPath}:force_style='FontName=Arial,Fontsize=20'`,
+            '-vf', `subtitles=${tempSrtPath}:force_style='FontName=Roboto,Fontsize=24,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,BackColour=&H80000000,BorderStyle=3,Outline=1,Shadow=0'`,
             '-c:v', 'libx264',
             '-crf', '23',
             '-preset', 'fast',
             '-c:a', 'aac',
             '-b:a', '128k',
-            clipPath // Use unique path
+            clipPath
         ];
 
         await runFFmpeg(args);
