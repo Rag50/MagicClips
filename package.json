@@ -7,13 +7,14 @@
   "type": "commonjs",
   "main": "clips.js",
   "scripts": {
-    "start": "node clips.js",
+    "start": "node new.js",
     "dev": "nodemon clips.js"
   },
   "dependencies": {
     "@azure/openai": "^2.0.0",
     "@azure/storage-blob": "^12.27.0",
     "axios": "^1.9.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "fluent-ffmpeg": "^2.1.3",
