@@ -24,7 +24,7 @@ const pythonPath = path.join(__dirname, 'venv', 'bin', 'python');
 // Store session data (in production, use Redis or database)
 const sessionStore = new Map();
 
-// prod setup remaning -- testing 
+// prod setup remaning -- testing -- new machine  
 
 // ===================================================================
 // Quality Options Endpoint
