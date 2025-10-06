@@ -1,7 +1,0 @@
-node_modules
-.env
-downloads/
-clips/
-.git
-.github
-Dockerfile

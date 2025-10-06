@@ -191,7 +191,7 @@ ${srtContent}
 
 Return ONLY the converted SRT content with same format:`;
 
-    const url = `https://cheta-m9rbttyh-eastus2.cognitiveservices.azure.com/openai/deployments/gpt-4.1-mini/chat/completions?api-version=2025-01-01-preview`;
+    const url = `${process.env.AZURE_OPENAI_ENDPOINT}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION || '2025-01-01-preview'}`;
 
     const data = {
         messages: [
@@ -203,7 +203,7 @@ Return ONLY the converted SRT content with same format:`;
 
     const headers = {
         'Content-Type': 'application/json',
-        'api-key': '',
+        'api-key': process.env.AZURE_OPENAI_API_KEY,
     };
 
     try {
@@ -917,7 +917,7 @@ async function analyzeSRTWithGPT(srtContent, contentType = 'general') {
                   ]
                 }`;
 
-    const url = `https://cheta-m9rbttyh-eastus2.cognitiveservices.azure.com/openai/deployments/gpt-4.1-mini/chat/completions?api-version=2025-01-01-preview`;
+    const url = `${process.env.AZURE_OPENAI_ENDPOINT}/openai/deployments/${process.env.AZURE_OPENAI_DEPLOYMENT_NAME}/chat/completions?api-version=${process.env.AZURE_OPENAI_API_VERSION || '2025-01-01-preview'}`;
 
     const data = {
         messages: [
@@ -928,7 +928,7 @@ async function analyzeSRTWithGPT(srtContent, contentType = 'general') {
 
     const headers = {
         'Content-Type': 'application/json',
-        'api-key': '',
+        'api-key': process.env.AZURE_OPENAI_API_KEY,
     };
 
     try {
@@ -1328,9 +1328,24 @@ app.get('/api/session/:sessionId', (req, res) => {
 });
 
 // ===================================================================
+// Health Check Endpoint for Google Cloud
+// ===================================================================
+app.get('/health', (req, res) => {
+    res.status(200).json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage()
+    });
+});
+
+// ===================================================================
 // Initialize and Start Server
 // ===================================================================
 initialize().then(() => {
     app.use('/clips', express.static(path.join(__dirname, 'clips')));
-    app.listen(port, () => console.log(`Enhanced Vertical Clips API with Quality Options running on port ${port}`));
+    app.listen(port, '0.0.0.0', () => console.log(`Enhanced Vertical Clips API with Quality Options running on port ${port}`));
+}).catch(error => {
+    console.error('Failed to initialize application:', error);
+    process.exit(1);
 });
