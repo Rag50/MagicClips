@@ -8,7 +8,7 @@
   "main": "magic.js",
   "scripts": {
     "start": "node magic.js",
-    "dev": "nodemon magic.js"
+    "dev": "node magic.js"
   },
   "dependencies": {
     "@azure/openai": "^2.0.0",

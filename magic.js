@@ -10,8 +10,10 @@ const port = process.env.PORT || 3000;
 const FormData = require('form-data');
 const axios = require('axios');
 const { tmpName } = require('tmp-promise');
-const SrtParser = require('srt-parser-2').default;
-const parser = new SrtParser();
+// srt-parser-2 is published as an ES module. Use dynamic import to load it
+// so this CommonJS file won't crash with ERR_REQUIRE_ESM.
+let SrtParser;
+let parser;
 const ffmpeg = require('fluent-ffmpeg');
 const { uploadToAzure, deleteLocalFile } = require('./azureStorage')
 const FFMPEG_PATH = 'ffmpeg';
@@ -993,6 +995,17 @@ async function initialize() {
     await fs.mkdir('downloads', { recursive: true });
     await fs.mkdir('clips', { recursive: true });
     await fs.mkdir('temp', { recursive: true });
+    // Dynamically import srt-parser-2 (ESM) and initialize parser
+    try {
+        const mod = await import('srt-parser-2');
+        // module might export default or the class directly
+        SrtParser = mod.default || mod.SrtParser || mod;
+        parser = new SrtParser();
+        console.log('srt-parser-2 loaded successfully');
+    } catch (err) {
+        console.error('Failed to dynamically import srt-parser-2:', err);
+        throw err;
+    }
 }
 
 function generateSRTFromWords(words) {
